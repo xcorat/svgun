@@ -81,35 +81,39 @@ class QAService {
     }
 
     return new Promise((resolve) => {
+      const processedAnswers = {};
+      let pending = 0;
+      let completed = false;
+
+      // Get the answers node
       this.gun
         .user()
         .get('answers')
-        .once((data) => {
-          if (!data) {
-            resolve({});
-            return;
-          }
+        .map()
+        .on((data, questionId) => {
+          if (data && data.answer) {
+            pending++;
+            const question = questions.questions.find(q => q.id === questionId);
+            const rawAnswer = data.answer;
+            
+            // Convert string back to array for multiple-select questions
+            const processedAnswer = question?.type === 'multiple-select' && rawAnswer 
+              ? rawAnswer.split('|||')
+              : rawAnswer;
 
-          // Process the answers and convert string back to array where needed
-          const processedAnswers = {};
-          Object.keys(data).forEach(questionId => {
-            if (data[questionId] && data[questionId].answer) {
-              const question = questions.questions.find(q => q.id === questionId);
-              const rawAnswer = data[questionId].answer;
-              
-              // Convert string back to array for multiple-select questions
-              const processedAnswer = question?.type === 'multiple-select' && rawAnswer 
-                ? rawAnswer.split('|||')
-                : rawAnswer;
+            processedAnswers[questionId] = {
+              answer: processedAnswer,
+              timestamp: data.timestamp
+            };
 
-              processedAnswers[questionId] = {
-                answer: processedAnswer,
-                timestamp: data[questionId].timestamp
-              };
+            // Give a small delay to collect all answers
+            if (!completed) {
+              completed = true;
+              setTimeout(() => {
+                resolve(processedAnswers);
+              }, 100);
             }
-          });
-
-          resolve(processedAnswers);
+          }
         });
     });
   }
@@ -125,35 +129,29 @@ class QAService {
       throw new Error('User not authenticated');
     }
 
+    const processedAnswers = {};
     const subscription = this.gun
       .user()
       .get('answers')
-      .on((data) => {
-        if (!data) {
-          callback({});
-          return;
+      .map()
+      .on((data, questionId) => {
+        if (data && data.answer) {
+          const question = questions.questions.find(q => q.id === questionId);
+          const rawAnswer = data.answer;
+          
+          // Convert string back to array for multiple-select questions
+          const processedAnswer = question?.type === 'multiple-select' && rawAnswer
+            ? rawAnswer.split('|||')
+            : rawAnswer;
+
+          processedAnswers[questionId] = {
+            answer: processedAnswer,
+            timestamp: data.timestamp
+          };
+
+          // Notify callback with updated answers
+          callback({...processedAnswers});
         }
-
-        // Process the answers and convert string back to array where needed
-        const processedAnswers = {};
-        Object.keys(data).forEach(questionId => {
-          if (data[questionId] && data[questionId].answer) {
-            const question = questions.questions.find(q => q.id === questionId);
-            const rawAnswer = data[questionId].answer;
-            
-            // Convert string back to array for multiple-select questions
-            const processedAnswer = question?.type === 'multiple-select' && rawAnswer
-              ? rawAnswer.split('|||')
-              : rawAnswer;
-
-            processedAnswers[questionId] = {
-              answer: processedAnswer,
-              timestamp: data[questionId].timestamp
-            };
-          }
-        });
-
-        callback(processedAnswers);
       });
 
     // Return unsubscribe function

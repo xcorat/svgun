@@ -58,7 +58,7 @@
     
     try {
       let saveAns = await qaService.saveAnswer(questionId, answer);
-      console.log(saveAns);
+      console.log(questionId, answer);
       answers = await qaService.getUserAnswers();
 
       
@@ -73,15 +73,12 @@
   }
 
   async function goToNextQuestion() {
+    console.log(currentIndex, questions.length);
     if (currentIndex < questions.length - 1) {
       currentIndex++;
     } else {
-      // Check if screen name is set (first required question)
-      const screenNameAnswer = answers[questions[0].id];
-      if (screenNameAnswer) {
-        // Stay on questions page but reset to beginning
-        currentIndex = 0;
-      }
+      // Go to answers profile page when all questions are done
+      goto('/answers');
     }
   }
 

@@ -15,6 +15,8 @@
 
   /** @type {string} */
   let textInput = '';
+  /** @type {string} */
+  let previousAnswer = '';
   /** @type {string[]} */
   let selectedOptions = [];
 
@@ -24,6 +26,7 @@
         selectedOptions = currentAnswer;
       } else {
         textInput = currentAnswer;
+        previousAnswer = currentAnswer;
       }
     }
   }
@@ -46,20 +49,22 @@
 
     <div class="flex-grow flex items-center justify-center py-8">
       {#if question.type === 'text'}
-        <input
-          type="text"
-          class="input input-bordered w-full max-w-md"
-          placeholder="Type your answer..."
-          bind:value={textInput}
-          on:change={() => handleAnswer(textInput)}
-        />
+        <div class="w-full max-w-md">
+          <input
+            type="text"
+            class="input input-bordered w-full"
+            placeholder="Type your answer..."
+            bind:value={textInput}
+          />
+        </div>
       {:else if question.type === 'text-area'}
-        <textarea
-          class="textarea textarea-bordered w-full max-w-md h-32"
-          placeholder="Type your answer..."
-          bind:value={textInput}
-          on:change={() => handleAnswer(textInput)}
-        ></textarea>
+        <div class="w-full max-w-md">
+          <textarea
+            class="textarea textarea-bordered w-full h-32"
+            placeholder="Type your answer..."
+            bind:value={textInput}
+          ></textarea>
+        </div>
       {:else if question.type === 'multiple-choice'}
         <div class="w-full max-w-md space-y-2">
           {#each question.options || [] as option}
@@ -103,10 +108,15 @@
             Skip
           </button>
         {/if}
-        {#if question.type === 'multiple-select'}
+        {#if question.type === 'multiple-select' || question.type === 'text' || question.type === 'text-area'}
           <FunButton
-            disabled={question.required && selectedOptions.length === 0}
-            on:click={() => dispatch('next')}
+            disabled={question.required && ((question.type === 'text' || question.type === 'text-area') ? !textInput.trim() : selectedOptions.length === 0)}
+            on:click={() => {
+              if ((question.type === 'text' || question.type === 'text-area') && textInput.trim()) {
+                handleAnswer(textInput);
+              }
+              dispatch('next');
+            }}
           >
             Next
           </FunButton>

@@ -45,14 +45,21 @@
         </h2>
       </div>
       
-      <div class="container mx-auto px-6 pb-16 flex justify-center">
+      <div class="container mx-auto px-6 pb-16 flex flex-col items-center gap-4">
         <FunButton 
           size="lg" 
           className="text-2xl transform hover:scale-105 transition-transform"
-          on:click={goToAuth}
+          on:click={() => goto('/auth/signup')}
         >
-          Next...
+          Create Account
         </FunButton>
+        
+        <button
+          class="btn btn-link btn-sm font-irish-grover"
+          on:click={() => goto('/auth/login')}
+        >
+          Already have an account? Sign In
+        </button>
       </div>
     </div>
   {/if}

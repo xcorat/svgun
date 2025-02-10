@@ -1,0 +1,86 @@
+{
+  "questions": [
+    {
+      "id": "screen_name",
+      "text": "What is your (screen) name?",
+      "type": "text",
+      "required": true,
+      "description": "This is how other users will see you",
+      "order": 1
+    },
+    {
+      "id": "favorite_food",
+      "text": "What's your favorite type of food?",
+      "type": "multiple-choice",
+      "options": [
+        "Italian",
+        "Japanese",
+        "Mexican",
+        "Indian",
+        "American",
+        "Chinese",
+        "Other"
+      ],
+      "required": false,
+      "description": "This helps us understand your food preferences",
+      "order": 2
+    },
+    {
+      "id": "cooking_level",
+      "text": "How would you rate your cooking skills?",
+      "type": "multiple-choice",
+      "options": [
+        "Beginner - I can barely boil water",
+        "Novice - I can follow simple recipes",
+        "Intermediate - I can cook most basic dishes",
+        "Advanced - I can improvise and create my own recipes",
+        "Expert - I could be a chef"
+      ],
+      "required": false,
+      "description": "This helps us tailor content to your skill level",
+      "order": 3
+    },
+    {
+      "id": "dietary_restrictions",
+      "text": "Do you have any dietary restrictions?",
+      "type": "multiple-select",
+      "options": [
+        "Vegetarian",
+        "Vegan",
+        "Gluten-free",
+        "Dairy-free",
+        "Kosher",
+        "Halal",
+        "None"
+      ],
+      "required": false,
+      "description": "This helps us filter suitable recipes for you",
+      "order": 4
+    },
+    {
+      "id": "cooking_goals",
+      "text": "What are your main goals for cooking?",
+      "type": "multiple-select",
+      "options": [
+        "Learn basic cooking skills",
+        "Try new cuisines",
+        "Cook healthier meals",
+        "Save money on food",
+        "Impress friends and family",
+        "Meal prep for the week",
+        "Have fun cooking"
+      ],
+      "required": false,
+      "description": "This helps us understand what you want to achieve",
+      "order": 5
+    },
+    {
+      "id": "bio",
+      "text": "Tell us a bit about yourself and your journey with food",
+      "type": "text-area",
+      "required": false,
+      "description": "Share your story with the community",
+      "order": 6
+    }
+  ]
+}
